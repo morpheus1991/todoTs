@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import styled from "styled-components";
 import { Ir_pm } from "../../../styles/globalStyles";
 import { Todo } from "../../structure/structure";
@@ -8,12 +8,15 @@ interface TodoItemProps {
   todo: Todo;
   onChange: Function;
   onClick: Function;
+  style: Object;
 }
 const TodoItemContainer = styled.li`
+  padding: 10px 0;
   position: relative;
   display: flex;
   align-items: center;
-
+  background: #f6fff3;
+  width: 100%;
   &:hover {
     .hoverArea {
       visibility: visible;
@@ -72,35 +75,44 @@ const TodoItemContainer = styled.li`
     transform: translateY(-10px);
   }
 `;
-const TodoItem = ({ todo, onChange, onClick }: TodoItemProps) => {
+const TodoItem = ({ todo, onChange, onClick, style }: TodoItemProps) => {
   const { id, text, done, endTime, createTime } = todo;
   return (
-    <TodoItemContainer className={`todoItem ${done ? "done" : "onGoing"}`}>
-      <Input
-        type="checkbox"
-        id={String(id)}
-        defaultChecked={done}
-        onChange={(e: React.FormEventHandler) => {
-          onChange(id);
-        }}
-        labelText="해야할일 체크"
-        labelShow={true}
-      ></Input>
-      <p className="textArea">{text}</p>
+    <div className={`todoItem ${done ? "done" : "onGoing"}`} style={style}>
+      <TodoItemContainer className={`todoItem ${done ? "done" : "onGoing"}`}>
+        <Input
+          type="checkbox"
+          id={String(id)}
+          defaultChecked={done}
+          onChange={(e: React.FormEventHandler) => {
+            onChange(id);
+          }}
+          labelText="해야할일 체크"
+          labelShow={true}
+        ></Input>
+        <p className="textArea">
+          {id}
+          {text}
+        </p>
 
-      <Button
-        size="sm"
-        text="삭제"
-        onClick={() => {
-          onClick(id);
-        }}
-      ></Button>
-      <div className="hoverArea">
-        <span>작성 : {createTime}</span>
-        <span>완료 : {endTime}</span>
-      </div>
-    </TodoItemContainer>
+        <Button
+          size="sm"
+          text="삭제"
+          onClick={() => {
+            onClick(id);
+          }}
+        ></Button>
+        <div className="hoverArea">
+          <span>작성 : {createTime}</span>
+          <span>완료 : {endTime}</span>
+        </div>
+      </TodoItemContainer>
+    </div>
   );
 };
 
-export default TodoItem;
+export default memo(
+  TodoItem,
+  (prevProps, nextProps) => prevProps.todo === nextProps.todo
+);
+// export default TodoItem;

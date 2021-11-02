@@ -36,18 +36,18 @@ export const getDayString = (num: number) => {
   return (res = day[num - 1]);
 };
 
-// const createBulkTodos = (limit: number) => {
-//   const array: TodoListType = [];
-//   for (let i = 0; i < limit; i++) {
-//     array.push({
-//       id: i,
-//       text: `할일${i}`,
-//       done: false,
-//       createTime: new Date().toLocaleTimeString(),
-//     });
-//   }
-//   return array;
-// };
+const createBulkTodos = (limit: number) => {
+  const array: TodoListType = [];
+  for (let i = 0; i < limit; i++) {
+    array.push({
+      id: i,
+      text: `할일${i}`,
+      done: false,
+      createTime: new Date().toLocaleTimeString(),
+    });
+  }
+  return array;
+};
 const getItem = (item: string) => {
   return JSON.parse(window.localStorage.getItem(item)!);
 };
@@ -65,8 +65,8 @@ const getIdNumber = () => {
   return 2501;
 };
 const PageTodoList = () => {
-  const todosInit: TodoListType = [];
-  // const todosInit: TodoListType = createBulkTodos(2500)!;
+  // const todosInit: TodoListType = [];
+  const todosInit: TodoListType = createBulkTodos(2500)!;
   let idNumber = useRef(getIdNumber());
   const [inputText, setInputText] = useState("");
   const [filterMode, setFilterMode] = useState("viewOnGoing");
@@ -106,24 +106,27 @@ const PageTodoList = () => {
     );
   }, []);
 
-  const todoDoneCheck = useCallback((id: number) => {
-    console.log(new Date().getDay());
-    const endTime = new Date().toLocaleTimeString();
-    const nextTodos = [...todos].map((todo) => {
-      if (todo.id == id) {
-        if (todo.done) {
-          todo.endTime = null;
-        } else {
-          todo.endTime = endTime;
+  const todoDoneCheck = useCallback(
+    (id: number) => {
+      console.log(new Date().getDay());
+      console.log(typeof id);
+      const endTime = new Date().toLocaleTimeString();
+      const nextTodos = [...todos].map((todo) => {
+        if (todo.id === id) {
+          if (todo.done) {
+            todo.endTime = null;
+          } else {
+            todo.endTime = endTime;
+          }
+          todo.done = !todo.done;
         }
-
-        todo.done = !todo.done;
-      }
-      return todo;
-    });
-    console.log(nextTodos);
-    setTodos(nextTodos);
-  }, []);
+        return { ...todo };
+      });
+      console.log(nextTodos);
+      setTodos(nextTodos);
+    },
+    [todos]
+  );
 
   const viewComplateTodo = () => {
     setFilterMode("viewComplate");
